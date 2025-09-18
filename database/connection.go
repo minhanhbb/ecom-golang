@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/minhanhbb/ecom-golang/config"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
-	"go-auth/config"
 )
 
 var DB *gorm.DB
@@ -24,6 +24,13 @@ func Connect(config *config.Config) {
 	DB, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Fatal("Failed to connect to database!")
+	}
+
+	sqlDB, err := DB.DB()
+	if err == nil {
+		sqlDB.SetMaxIdleConns(10)
+		sqlDB.SetMaxOpenConns(100)
+		sqlDB.SetConnMaxLifetime(0)
 	}
 
 	fmt.Println("Database connection successful.")

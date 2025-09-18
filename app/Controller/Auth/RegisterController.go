@@ -4,9 +4,9 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	models "github.com/minhanhbb/ecom-golang/app/Models"
+	"github.com/minhanhbb/ecom-golang/database"
 	"golang.org/x/crypto/bcrypt"
-	"go-auth/app/Models"
-	"go-auth/database"
 )
 
 func Register(c *gin.Context) {

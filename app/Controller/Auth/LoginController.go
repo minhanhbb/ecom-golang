@@ -3,10 +3,13 @@ package auth
 import (
 	"net/http"
 
+	"time"
+
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v5"
+	models "github.com/minhanhbb/ecom-golang/app/Models"
+	"github.com/minhanhbb/ecom-golang/database"
 	"golang.org/x/crypto/bcrypt"
-	"go-auth/app/Models"
-	"go-auth/database"
 )
 
 func Login(c *gin.Context) {
@@ -31,5 +34,19 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "Login successful"})
+	claims := jwt.MapClaims{
+		"user_id": user.ID,
+		"email":   user.Email,
+		"exp":     time.Now().Add(time.Hour * 72).Unix(),
+	}
+	tokenObj := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	token, err := tokenObj.SignedString([]byte("minhanh24hihi@gmail.com"))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not generate token"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Login successful",
+		"token":   token,
+	})
 }
